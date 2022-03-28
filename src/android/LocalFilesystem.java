@@ -28,8 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
-
-import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaResourceApi;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +44,8 @@ import java.nio.charset.Charset;
 public class LocalFilesystem extends Filesystem {
     private final Context context;
 
-    public LocalFilesystem(String name, Context context, CordovaResourceApi resourceApi, File fsRoot, CordovaPreferences preferences) {
-        super(Uri.fromFile(fsRoot).buildUpon().appendEncodedPath("").build(), name, resourceApi, preferences);
+    public LocalFilesystem(String name, Context context, CordovaResourceApi resourceApi, File fsRoot) {
+        super(Uri.fromFile(fsRoot).buildUpon().appendEncodedPath("").build(), name, resourceApi);
         this.context = context;
     }
 
@@ -90,9 +88,10 @@ public class LocalFilesystem extends Filesystem {
         if (!subPath.isEmpty()) {
             subPath = subPath.substring(1);
         }
-
-        Uri.Builder b = createLocalUriBuilder();
-
+        Uri.Builder b = new Uri.Builder()
+            .scheme(LocalFilesystemURL.FILESYSTEM_PROTOCOL)
+            .authority("localhost")
+            .path(name);
         if (!subPath.isEmpty()) {
             b.appendEncodedPath(subPath);
         }

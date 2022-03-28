@@ -21,7 +21,6 @@ package org.apache.cordova.file;
 import android.content.res.AssetManager;
 import android.net.Uri;
 
-import org.apache.cordova.CordovaPreferences;
 import org.apache.cordova.CordovaResourceApi;
 import org.apache.cordova.LOG;
 import org.json.JSONArray;
@@ -134,8 +133,8 @@ public class AssetFilesystem extends Filesystem {
         }
     }
 
-    public AssetFilesystem(AssetManager assetManager, CordovaResourceApi resourceApi, CordovaPreferences preferences) {
-        super(Uri.parse("file:///android_asset/"), "assets", resourceApi, preferences);
+    public AssetFilesystem(AssetManager assetManager, CordovaResourceApi resourceApi) {
+        super(Uri.parse("file:///android_asset/"), "assets", resourceApi);
         this.assetManager = assetManager;
 	}
 
@@ -162,9 +161,10 @@ public class AssetFilesystem extends Filesystem {
         if (!subPath.isEmpty()) {
             subPath = subPath.substring(1);
         }
-
-        Uri.Builder b = createLocalUriBuilder();
-
+        Uri.Builder b = new Uri.Builder()
+            .scheme(LocalFilesystemURL.FILESYSTEM_PROTOCOL)
+            .authority("localhost")
+            .path(name);
         if (!subPath.isEmpty()) {
             b.appendEncodedPath(subPath);
         }
